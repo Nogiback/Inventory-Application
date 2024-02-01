@@ -1,21 +1,19 @@
 #! /usr/bin/env node
 
 console.log(
-  'This script populates some test books, authors, genres and bookinstances to your database. Specified database as argument - e.g.: node populatedb "mongodb+srv://cooluser:coolpassword@cluster0.lz91hw2.mongodb.net/local_library?retryWrites=true&w=majority"'
+  'This script populates some test documents to your database. Specified database as argument - e.g.: node populatedb "mongodb+srv://cooluser:coolpassword@cluster0.lz91hw2.mongodb.net/local_library?retryWrites=true&w=majority"'
 );
 
 // Get arguments passed on command line
 const userArgs = process.argv.slice(2);
 
-const Book = require("./models/book");
-const Author = require("./models/author");
-const Genre = require("./models/genre");
-const BookInstance = require("./models/bookinstance");
+const Disc = require("./models/disc");
+const DiscType = require("./models/discType");
+const Manufacturer = require("./models/manufacturer");
 
-const genres = [];
-const authors = [];
-const books = [];
-const bookinstances = [];
+const discs = [];
+const discTypes = [];
+const manufacturers = [];
 
 const mongoose = require("mongoose");
 mongoose.set("strictQuery", false);
@@ -28,10 +26,9 @@ async function main() {
   console.log("Debug: About to connect");
   await mongoose.connect(mongoDB);
   console.log("Debug: Should be connected?");
-  await createGenres();
-  await createAuthors();
-  await createBooks();
-  await createBookInstances();
+  await createDiscTypes();
+  await createManufacturers();
+  await createDiscs();
   console.log("Debug: Closing mongoose");
   mongoose.connection.close();
 }
@@ -39,191 +36,207 @@ async function main() {
 // We pass the index to the ...Create functions so that, for example,
 // genre[0] will always be the Fantasy genre, regardless of the order
 // in which the elements of promise.all's argument complete.
-async function genreCreate(index, name) {
-  const genre = new Genre({ name: name });
-  await genre.save();
-  genres[index] = genre;
-  console.log(`Added genre: ${name}`);
+async function manufacturerCreate(index, name, plastics) {
+  const manufacturer = new Manufacturer({
+    name: name,
+    plastics: plastics,
+  });
+  await manufacturer.save();
+  manufacturers[index] = manufacturer;
+  console.log(`Added manufacturer: ${name}`);
 }
 
-async function authorCreate(index, first_name, family_name, d_birth, d_death) {
-  const authordetail = { first_name: first_name, family_name: family_name };
-  if (d_birth != false) authordetail.date_of_birth = d_birth;
-  if (d_death != false) authordetail.date_of_death = d_death;
-
-  const author = new Author(authordetail);
-
-  await author.save();
-  authors[index] = author;
-  console.log(`Added author: ${first_name} ${family_name}`);
+async function discTypeCreate(index, type, description) {
+  const discType = new DiscType({ type: type, description: description });
+  await discType.save();
+  discTypes[index] = discType;
+  console.log(`Added disc type: ${type}`);
 }
 
-async function bookCreate(index, title, summary, isbn, author, genre) {
-  const bookdetail = {
-    title: title,
-    summary: summary,
-    author: author,
-    isbn: isbn,
+async function discCreate(
+  index,
+  name,
+  manufacturer,
+  plastic,
+  flightNumbers,
+  discType,
+  price,
+  stock
+) {
+  const discDetail = {
+    name: name,
+    manufacturer: manufacturer,
+    plastic: plastic,
+    flightNumbers: flightNumbers,
+    discType: discType,
+    price: price,
+    stock: stock,
   };
-  if (genre != false) bookdetail.genre = genre;
 
-  const book = new Book(bookdetail);
-  await book.save();
-  books[index] = book;
-  console.log(`Added book: ${title}`);
+  const disc = new Disc(discDetail);
+  await disc.save();
+  discs[index] = disc;
+  console.log(`Added disc: ${name}`);
 }
 
-async function bookInstanceCreate(index, book, imprint, due_back, status) {
-  const bookinstancedetail = {
-    book: book,
-    imprint: imprint,
-  };
-  if (due_back != false) bookinstancedetail.due_back = due_back;
-  if (status != false) bookinstancedetail.status = status;
-
-  const bookinstance = new BookInstance(bookinstancedetail);
-  await bookinstance.save();
-  bookinstances[index] = bookinstance;
-  console.log(`Added bookinstance: ${imprint}`);
-}
-
-async function createGenres() {
-  console.log("Adding genres");
+async function createManufacturers() {
+  console.log("Adding manufacturers");
   await Promise.all([
-    genreCreate(0, "Fantasy"),
-    genreCreate(1, "Science Fiction"),
-    genreCreate(2, "French Poetry"),
+    manufacturerCreate(0, "MVP/Axiom/Streamline", [
+      "Electron",
+      "Neutron",
+      "Proton",
+      "Fission",
+      "Eclipse",
+      "Plasma",
+      "Cosmic Neutron",
+      "Cosmic Electron",
+      "Prism Proton",
+      "R2 Neutron",
+    ]),
+    manufacturerCreate(1, "Innova", [
+      "Star",
+      "Champion",
+      "DX",
+      "Halo Star",
+      "GStar",
+      "Blizzard",
+      "Metal Flake",
+      "Nexus",
+      "XT",
+      "Pro",
+      "R-Pro",
+      "KC Pro",
+      "JK Pro",
+    ]),
+    manufacturerCreate(2, "Kastaplast", [
+      "K1",
+      "K1 Soft",
+      "K3",
+      "K3 Hard",
+      "K1 Glow",
+    ]),
   ]);
 }
 
-async function createAuthors() {
-  console.log("Adding authors");
+async function createDiscTypes() {
+  console.log("Adding disc types");
   await Promise.all([
-    authorCreate(0, "Patrick", "Rothfuss", "1973-06-06", false),
-    authorCreate(1, "Ben", "Bova", "1932-11-8", false),
-    authorCreate(2, "Isaac", "Asimov", "1920-01-02", "1992-04-06"),
-    authorCreate(3, "Bob", "Billings", false, false),
-    authorCreate(4, "Jim", "Jones", "1971-12-16", false),
-  ]);
-}
-
-async function createBooks() {
-  console.log("Adding Books");
-  await Promise.all([
-    bookCreate(
+    discTypeCreate(
       0,
-      "The Name of the Wind (The Kingkiller Chronicle, #1)",
-      "I have stolen princesses back from sleeping barrow kings. I burned down the town of Trebon. I have spent the night with Felurian and left with both my sanity and my life. I was expelled from the University at a younger age than most people are allowed in. I tread paths by moonlight that others fear to speak of during day. I have talked to Gods, loved women, and written songs that make the minstrels weep.",
-      "9781473211896",
-      authors[0],
-      [genres[0]]
+      "Putters",
+      "Putters are the deepest, slowest, disc golf discs and have the thinnest rims. Putters are intended to fly shorter distances and on straighter lines. Putters are the slowest spinning discs, so they have less potential to deviate off line. While putters are made to go in the basket, they’re also less likely to fly too far beyond the basket. Along with developing a good short game, a player’s use of putters is extremely important to scoring well."
     ),
-    bookCreate(
+    discTypeCreate(
       1,
-      "The Wise Man's Fear (The Kingkiller Chronicle, #2)",
-      "Picking up the tale of Kvothe Kingkiller once again, we follow him into exile, into political intrigue, courtship, adventure, love and magic... and further along the path that has turned Kvothe, the mightiest magician of his age, a legend in his own time, into Kote, the unassuming pub landlord.",
-      "9788401352836",
-      authors[0],
-      [genres[0]]
+      "Midranges",
+      "Midranges are a great disc to choose as your first disc. Midranges often offer straighter flights and won’t vary from their intended flight to the degree that fairway and distance drivers will if thrown errantly. Midranges have smaller rims that feel comfortable in most people’s hands and often have slightly deeper inner rims than drivers do. Midranges are very helpful for navigating narrow fairways and landing approaches close to the basket."
     ),
-    bookCreate(
+    discTypeCreate(
       2,
-      "The Slow Regard of Silent Things (Kingkiller Chronicle)",
-      "Deep below the University, there is a dark place. Few people know of it: a broken web of ancient passageways and abandoned rooms. A young woman lives there, tucked among the sprawling tunnels of the Underthing, snug in the heart of this forgotten place.",
-      "9780756411336",
-      authors[0],
-      [genres[0]]
+      "Fairway Drivers",
+      "Fairway Drivers have slightly smaller rims than distance drivers and are easier to control because they have less speed potential. While fairway drivers have less distance potential, they are a great choice for tighter lines, shots with less skip at the end, straighter flights, and shorter drives. Fairway drivers are generally a good choice for experienced and inexperienced players alike."
     ),
-    bookCreate(
+    discTypeCreate(
       3,
-      "Apes and Angels",
-      "Humankind headed out to the stars not for conquest, nor exploration, nor even for curiosity. Humans went to the stars in a desperate crusade to save intelligent life wherever they found it. A wave of death is spreading through the Milky Way galaxy, an expanding sphere of lethal gamma ...",
-      "9780765379528",
-      authors[1],
-      [genres[1]]
-    ),
-    bookCreate(
-      4,
-      "Death Wave",
-      "In Ben Bova's previous novel New Earth, Jordan Kell led the first human mission beyond the solar system. They discovered the ruins of an ancient alien civilization. But one alien AI survived, and it revealed to Jordan Kell that an explosion in the black hole at the heart of the Milky Way galaxy has created a wave of deadly radiation, expanding out from the core toward Earth. Unless the human race acts to save itself, all life on Earth will be wiped out...",
-      "9780765379504",
-      authors[1],
-      [genres[1]]
-    ),
-    bookCreate(
-      5,
-      "Test Book 1",
-      "Summary of test book 1",
-      "ISBN111111",
-      authors[4],
-      [genres[0], genres[1]]
-    ),
-    bookCreate(
-      6,
-      "Test Book 2",
-      "Summary of test book 2",
-      "ISBN222222",
-      authors[4],
-      false
+      "Distance Drivers",
+      "Distance Drivers, as their name suggests, have the greatest potential to travel the greatest distance. However, they also require the greatest speed to travel true to their intended flight characteristics. Distance drivers have wider rims and sharper noses, so they might not be the best choice for younger players, newer players, or players with slower arm speeds."
     ),
   ]);
 }
 
-async function createBookInstances() {
-  console.log("Adding authors");
+async function createDiscs() {
+  console.log("Adding Discs");
   await Promise.all([
-    bookInstanceCreate(
+    discCreate(
       0,
-      books[0],
-      "London Gollancz, 2014.",
-      false,
-      "Available"
+      "Pilot",
+      manufacturers[0],
+      "Electron",
+      { speed: 2, glide: 5, turn: 0, fade: 1 },
+      discTypes[0],
+      16.49,
+      50
     ),
-    bookInstanceCreate(1, books[1], " Gollancz, 2011.", false, "Loaned"),
-    bookInstanceCreate(2, books[2], " Gollancz, 2015.", false, false),
-    bookInstanceCreate(
+    discCreate(
+      1,
+      "Hex",
+      manufacturers[0],
+      "Neutron",
+      { speed: 5, glide: 5, turn: -1, fade: 1 },
+      discTypes[1],
+      24.49,
+      25
+    ),
+    discCreate(
+      2,
+      "Time Lapse",
+      manufacturers[0],
+      "Neutron",
+      { speed: 12, glide: 5, turn: -1, fade: 3 },
+      discTypes[3],
+      24.49,
+      12
+    ),
+    discCreate(
       3,
-      books[3],
-      "New York Tom Doherty Associates, 2016.",
-      false,
-      "Available"
+      "Firebird",
+      manufacturers[1],
+      "Champion",
+      { speed: 9, glide: 3, turn: 0, fade: 4 },
+      discTypes[2],
+      23.49,
+      33
     ),
-    bookInstanceCreate(
+    discCreate(
       4,
-      books[3],
-      "New York Tom Doherty Associates, 2016.",
-      false,
-      "Available"
+      "Destroyer",
+      manufacturers[1],
+      "Star",
+      { speed: 12, glide: 5, turn: -1, fade: 3 },
+      discTypes[3],
+      23.49,
+      62
     ),
-    bookInstanceCreate(
+    discCreate(
       5,
-      books[3],
-      "New York Tom Doherty Associates, 2016.",
-      false,
-      "Available"
+      "Aviar",
+      manufacturers[1],
+      "DX",
+      { speed: 2, glide: 3, turn: 0, fade: 1 },
+      discTypes[0],
+      13.99,
+      420
     ),
-    bookInstanceCreate(
+    discCreate(
       6,
-      books[4],
-      "New York, NY Tom Doherty Associates, LLC, 2015.",
-      false,
-      "Available"
+      "Berg",
+      manufacturers[2],
+      "K1",
+      { speed: 1, glide: 1, turn: 0, fade: 2 },
+      discTypes[0],
+      25.49,
+      35
     ),
-    bookInstanceCreate(
+    discCreate(
       7,
-      books[4],
-      "New York, NY Tom Doherty Associates, LLC, 2015.",
-      false,
-      "Maintenance"
+      "Berg",
+      manufacturers[2],
+      "K1 Soft",
+      { speed: 1, glide: 1, turn: 0, fade: 2 },
+      discTypes[0],
+      25.49,
+      13
     ),
-    bookInstanceCreate(
+    discCreate(
       8,
-      books[4],
-      "New York, NY Tom Doherty Associates, LLC, 2015.",
-      false,
-      "Loaned"
+      "Berg",
+      manufacturers[2],
+      "K3",
+      { speed: 1, glide: 1, turn: 0, fade: 2 },
+      discTypes[0],
+      18.49,
+      49
     ),
-    bookInstanceCreate(9, books[0], "Imprint XXX2", false, false),
-    bookInstanceCreate(10, books[1], "Imprint XXX3", false, false),
   ]);
 }
