@@ -1,5 +1,25 @@
 const Disc = require("../models/disc");
+const DiscType = require("../models/discType");
+const Manufacturer = require("../models/manufacturer");
+const { body, validationResult } = require("express-validator");
+
 const asyncHandler = require("express-async-handler");
+
+exports.index = asyncHandler(async (req, res, next) => {
+  // Get counts
+  const [numDiscs, numDiscTypes, numManufacturers] = await Promise.all([
+    Disc.countDocuments({}).exec(),
+    DiscType.countDocuments({}).exec(),
+    Manufacturer.countDocuments({}).exec(),
+  ]);
+
+  res.render("index", {
+    title: "Nogi's Disc Golf Inventory",
+    numDiscs: numDiscs,
+    numDiscTypes: numDiscTypes,
+    numManufacturers: numManufacturers,
+  });
+});
 
 exports.disc_list = asyncHandler(async (req, res, next) => {
   res.send("NOT YET IMPLEMENTED: Disc List");
