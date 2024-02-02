@@ -12,13 +12,13 @@ router.get("/", indexController.store);
 /// DISC ROUTES ///
 
 router.get("/discs", discController.disc_list);
-router.get("discs/create", discController.disc_create_get);
-router.post("discs/create", discController.disc_create_post);
-router.get("/discs/:id/delete", discController.disc_delete_get);
-router.post("/discs/:id/delete", discController.disc_delete_post);
-router.get("/discs/:id/update", discController.disc_update_get);
-router.post("/discs/:id/update", discController.disc_update_post);
-router.get("/discs/:id", discController.disc_details);
+router.get("disc/create", discController.disc_create_get);
+router.post("disc/create", discController.disc_create_post);
+router.get("/disc/:id/delete", discController.disc_delete_get);
+router.post("/disc/:id/delete", discController.disc_delete_post);
+router.get("/disc/:id/update", discController.disc_update_get);
+router.post("/disc/:id/update", discController.disc_update_post);
+router.get("/disc/:id", discController.disc_details);
 
 /// DISC TYPE ROUTES ///
 

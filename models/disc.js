@@ -21,7 +21,7 @@ const DiscSchema = new Schema({
 });
 
 DiscSchema.virtual("url").get(function () {
-  return `/store/discs/${this._id}`;
+  return `/store/disc/${this._id}`;
 });
 
 module.exports = mongoose.model("Disc", DiscSchema);
