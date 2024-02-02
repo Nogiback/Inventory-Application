@@ -6,7 +6,7 @@ exports.manufacturer_list = asyncHandler(async (req, res, next) => {
 });
 
 exports.manufacturer_details = asyncHandler(async (req, res, next) => {
-  res.send("NOT YET IMPLEMENTED: Manufacturer Details");
+  res.send(`NOT YET IMPLEMENTED: Manufacturer Details: ${req.params.id}`);
 });
 
 exports.manufacturer_create_get = asyncHandler(async (req, res, next) => {

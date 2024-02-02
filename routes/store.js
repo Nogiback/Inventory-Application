@@ -5,6 +5,9 @@ const router = express.Router();
 const discTypeController = require("../controllers/discTypeController");
 const manufacturerController = require("../controllers/manufacturerController");
 const discController = require("../controllers/discController");
+const indexController = require("../controllers/indexController");
+
+router.get("/", indexController.store);
 
 /// DISC ROUTES ///
 
@@ -56,3 +59,5 @@ router.post(
   manufacturerController.manufacturer_update_post
 );
 router.get("/manufacturer/:id", manufacturerController.manufacturer_details);
+
+module.exports = router;
