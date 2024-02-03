@@ -2,7 +2,9 @@ const DiscType = require("../models/discType");
 const asyncHandler = require("express-async-handler");
 
 exports.discType_list = asyncHandler(async (req, res, next) => {
-  res.send("NOT YET IMPLEMENTED: DiscType List");
+  const discTypes = await DiscType.find().sort({ type: 1 }).exec();
+
+  res.render("discType_list", { title: "Disc Types", discTypes: discTypes });
 });
 
 exports.discType_details = asyncHandler(async (req, res, next) => {

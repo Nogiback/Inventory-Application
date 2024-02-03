@@ -1,0 +1,11 @@
+extends layout
+
+block content
+  h1= title
+  if discTypes.length
+    ul.list-group
+      each discType in discTypes
+        li.list-group-item.d-flex.justify-content-between.align-items-center.bg-dark
+          a(href=discType.url) #{discType.type}
+  else
+    p There are no discs types.

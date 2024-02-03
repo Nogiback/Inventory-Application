@@ -8,11 +8,5 @@ block content
         li.list-group-item.d-flex.justify-content-between.align-items-center.bg-dark
           a(href=disc.url) #{disc.plastic} #{disc.name} (#{disc.manufacturer.name}) - $#{disc.price}
           span.badge.badge-primary.badge-pill #{disc.stock}
-    //- ul
-    //-   each disc in discList
-    //-     li
-    //-       a(href=disc.url) #{disc.plastic} #{disc.name}
-    //-       |  (#{disc.manufacturer.name}) - $#{disc.price}
-
   else
     p There are no discs.
