@@ -2,7 +2,12 @@ const Manufacturer = require("../models/manufacturer");
 const asyncHandler = require("express-async-handler");
 
 exports.manufacturer_list = asyncHandler(async (req, res, next) => {
-  res.send("NOT YET IMPLEMENTED: Manufacturer List");
+  const manufacturers = await Manufacturer.find().sort({ name: 1 }).exec();
+
+  res.render("manufacturer_list", {
+    title: "Manufacturers",
+    manufacturers: manufacturers,
+  });
 });
 
 exports.manufacturer_details = asyncHandler(async (req, res, next) => {

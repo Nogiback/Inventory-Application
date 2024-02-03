@@ -1,0 +1,11 @@
+extends layout
+
+block content
+  h1= title
+  if manufacturers.length
+    ul.list-group
+      each manufacturer in manufacturers
+        li.list-group-item.d-flex.justify-content-between.align-items-center.bg-dark
+          a(href=manufacturer.url) #{manufacturer.name}
+  else
+    p There are no manufacturers.
