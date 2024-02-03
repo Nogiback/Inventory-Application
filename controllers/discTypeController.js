@@ -1,4 +1,5 @@
 const DiscType = require("../models/discType");
+const Disc = require("../models/disc");
 const asyncHandler = require("express-async-handler");
 
 exports.discType_list = asyncHandler(async (req, res, next) => {
@@ -8,7 +9,24 @@ exports.discType_list = asyncHandler(async (req, res, next) => {
 });
 
 exports.discType_details = asyncHandler(async (req, res, next) => {
-  res.send(`NOT YET IMPLEMENTED: DiscType Details ${req.params.id}`);
+  const [discType, discsOfDiscType] = await Promise.all([
+    DiscType.findById(req.params.id).exec(),
+    Disc.find({ discType: req.params.id }, "name manufacturer plastic")
+      .populate("manufacturer")
+      .exec(),
+  ]);
+
+  if (discType === null) {
+    const err = new Error("Disc Type not found");
+    err.status = 404;
+    return next(err);
+  }
+
+  res.render("discType_details", {
+    title: "Disc Type Details",
+    discType: discType,
+    discsOfDiscType: discsOfDiscType,
+  });
 });
 
 exports.discType_create_get = asyncHandler(async (req, res, next) => {

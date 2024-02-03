@@ -1,0 +1,15 @@
+extends layout
+
+block content
+  h1= title
+  .card.bg-dark.text-white
+    h5.card-header #{discType.type}
+    .card-body
+      p.card-text #{discType.description}
+      p.card-text Discs In Stock:
+      ul 
+        each disc in discsOfDiscType
+          li.card-text
+            a(href=disc.url) #{disc.manufacturer.name} #{disc.plastic} #{disc.name}
+      a.btn.btn-primary.mr-2(href=discType.url+'/update') Update Disc Type
+      a.btn.btn-primary(href=discType.url+'/delete') Delete Disc Type

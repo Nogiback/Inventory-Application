@@ -1,4 +1,5 @@
 const Manufacturer = require("../models/manufacturer");
+const Disc = require("../models/disc");
 const asyncHandler = require("express-async-handler");
 
 exports.manufacturer_list = asyncHandler(async (req, res, next) => {
@@ -11,7 +12,22 @@ exports.manufacturer_list = asyncHandler(async (req, res, next) => {
 });
 
 exports.manufacturer_details = asyncHandler(async (req, res, next) => {
-  res.send(`NOT YET IMPLEMENTED: Manufacturer Details: ${req.params.id}`);
+  const [manufacturer, allDiscsByManufacturer] = await Promise.all([
+    Manufacturer.findById(req.params.id).exec(),
+    Disc.find({ manufacturer: req.params.id }, "name plastic").exec(),
+  ]);
+
+  if (manufacturer === null) {
+    const err = new Error("Manufacturer not found");
+    err.status = 404;
+    return next(err);
+  }
+
+  res.render("manufacturer_details", {
+    title: "Manufacturer Details",
+    manufacturer: manufacturer,
+    allDiscsByManufacturer: allDiscsByManufacturer,
+  });
 });
 
 exports.manufacturer_create_get = asyncHandler(async (req, res, next) => {

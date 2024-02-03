@@ -15,7 +15,21 @@ exports.disc_list = asyncHandler(async (req, res, next) => {
 });
 
 exports.disc_details = asyncHandler(async (req, res, next) => {
-  res.send(`NOT YET IMPLEMENTED: Disc Details ${req.params.id}`);
+  const disc = await Disc.findById(req.params.id)
+    .populate("manufacturer")
+    .populate("discType")
+    .exec();
+
+  if (disc === null) {
+    const err = new Error("Disc not found");
+    err.status = 404;
+    return next(err);
+  }
+
+  res.render("disc_details", {
+    title: "Disc Details",
+    disc: disc,
+  });
 });
 
 exports.disc_create_get = asyncHandler(async (req, res, next) => {

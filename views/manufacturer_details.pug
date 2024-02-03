@@ -1,0 +1,18 @@
+extends layout
+
+block content
+  h1= title
+  .card.bg-dark.text-white
+    h5.card-header #{manufacturer.name}
+    .card-body
+      p.card-text Plastics:
+      ul 
+        each plastic in manufacturer.plastics
+          li.card-text #{plastic}
+      p.card-text Discs In Stock: 
+      ul 
+        each disc in allDiscsByManufacturer
+          li.card-text
+            a(href=disc.url) #{disc.plastic} #{disc.name}
+      a.btn.btn-primary.mr-2(href=manufacturer.url+'/update') Update Manufacturer
+      a.btn.btn-primary(href=manufacturer.url+'/delete') Delete Manufacturer
