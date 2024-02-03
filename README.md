@@ -6,7 +6,7 @@ This is one of the first NodeJS projects under the Fullstack Javascript Developm
 
 ## Built With
 
-NodeJS, Javascript, Express, Mongoose, MongoDB, Pug
+NodeJS, Javascript, Express, Mongoose, MongoDB, Pug, Bootstrap
 
 ## Lessons Learned
 

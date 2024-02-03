@@ -6,7 +6,12 @@ const { body, validationResult } = require("express-validator");
 const asyncHandler = require("express-async-handler");
 
 exports.disc_list = asyncHandler(async (req, res, next) => {
-  res.send("NOT YET IMPLEMENTED: Disc List");
+  const allDiscs = await Disc.find({}, "name manufacturer plastic price stock")
+    .sort({ name: 1 })
+    .populate("manufacturer")
+    .exec();
+
+  res.render("disc_list", { title: "Disc List", discList: allDiscs });
 });
 
 exports.disc_details = asyncHandler(async (req, res, next) => {
