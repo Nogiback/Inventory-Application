@@ -1,6 +1,7 @@
 const Manufacturer = require("../models/manufacturer");
 const Disc = require("../models/disc");
 const asyncHandler = require("express-async-handler");
+const { body, validationResult } = require("express-validator");
 
 exports.manufacturer_list = asyncHandler(async (req, res, next) => {
   const manufacturers = await Manufacturer.find().sort({ name: 1 }).exec();
@@ -30,13 +31,43 @@ exports.manufacturer_details = asyncHandler(async (req, res, next) => {
   });
 });
 
-exports.manufacturer_create_get = asyncHandler(async (req, res, next) => {
-  res.send("NOT YET IMPLEMENTED: Manufacturer Create GET");
-});
+exports.manufacturer_create_get = (req, res, next) => {
+  res.render("manufacturer_form", { title: "Add Manufacturer" });
+};
 
-exports.manufacturer_create_post = asyncHandler(async (req, res, next) => {
-  res.send("NOT YET IMPLEMENTED: Manufacturer Create POST");
-});
+exports.manufacturer_create_post = [
+  body("name", "Manufacturer name must contain at least 3 characters.")
+    .trim()
+    .isLength({ min: 3 })
+    .escape(),
+
+  asyncHandler(async (req, res, next) => {
+    const errors = validationResult(req);
+
+    // Create a genre object with escaped and trimmed data.
+    const manufacturer = new Manufacturer({ name: req.body.name });
+
+    if (!errors.isEmpty()) {
+      res.render("manufacturer_form", {
+        title: "Add Manufacturer",
+        manufacturer: manufacturer,
+        errors: errors.array(),
+      });
+      return;
+    } else {
+      const manufacturerExists = await Manufacturer.findOne({
+        name: req.body.name,
+      }).exec();
+      if (manufacturerExists) {
+        res.redirect(manufacturerExists.url);
+      } else {
+        await manufacturer.save();
+        // New genre saved. Redirect to genre detail page.
+        res.redirect(manufacturer.url);
+      }
+    }
+  }),
+];
 
 exports.manufacturer_delete_get = asyncHandler(async (req, res, next) => {
   res.send("NOT YET IMPLEMENTED: Manufacturer Delete GET");

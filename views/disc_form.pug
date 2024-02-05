@@ -1,0 +1,79 @@
+extends layout
+
+block content
+
+  h1 #{title}
+
+  form.mb-5(method='POST')
+    .form-group
+      label(for='name') Disc Name:
+      input#name.form-control(type='text' name='name' required value=(undefined===disc ? '' : disc.name))
+    .form-group
+      label(for='discType') Disc Type: 
+      select#discType.form-control(name='discType' required)
+        option(value='') --Please select a disc type--
+        for discType in discTypes 
+          if disc 
+            if discType._id.toString() === disc.discType._id.toString()
+              option(value=discType._id selected) #{discType.type}
+            else
+              option(value=discType._id) #{discType.type}
+          else 
+            option(value=discType._id) #{discType.type}
+    .form-group
+      label(for='manufacturer') Manufacturer: 
+      select#manufacturer.form-control(name='manufacturer' required)
+        option(value='') --Please select a manufacturer--
+        for manufacturer in manufacturers 
+          if disc 
+            if manufacturer._id.toString() === disc.manufacturer._id.toString()
+              option(value=manufacturer._id selected) #{manufacturer.name}
+            else
+              option(value=manufacturer._id) #{manufacturer.name}
+          else 
+            option(value=manufacturer._id) #{manufacturer.name}
+    .form-group 
+      label(for='plastic') Plastic:
+      input#plastic.form-control(type='text' name='plastic' required value=(undefined===disc ? '' : disc.plastic))
+    .form-group
+      label(for='price') Price ($):
+      input#price.form-control(type='number' name='price' min='0.00' max='999.99' step='0.01' required value=(undefined===disc ? 0.00 : disc.price))
+    .form-group
+      label(for='stock') Stock:
+      input#stock.form-control(type='number' name='stock' min='1' max='999' required value=(undefined===disc ? 1 : disc.stock))
+    p Flight Numbers:
+    .form-group 
+      label(for='speed') Speed: &nbsp;
+      output
+        if undefined===disc 
+          span 1
+        else 
+          span #{disc.flightNumbers.speed}
+      input#speed.custom-range(type='range' name='speed' min='1' max='15' step='0.5' required value=(undefined===disc ? 1 : disc.flightNumbers.speed) oninput='this.previousElementSibling.value = this.value')
+      label(for='glide') Glide: &nbsp;
+      output
+        if undefined===disc 
+          span 0
+        else 
+          span #{disc.flightNumbers.glide}
+      input#glide.custom-range(type='range' name='glide' min='0' max='7' step='0.5' required value=(undefined===disc ? 0 : disc.flightNumbers.glide) oninput='this.previousElementSibling.value = this.value')
+      label(for='turn') Turn: &nbsp;
+      output
+        if undefined===disc 
+          span -5
+        else 
+          span #{disc.flightNumbers.turn}
+      input#turn.custom-range(type='range' name='turn' min='-5' max='2' step='0.5' required value=(undefined===disc ? -5 : disc.flightNumbers.turn) oninput='this.previousElementSibling.value = this.value')
+      label(for='fade') Fade: &nbsp;
+      output
+        if undefined===disc 
+          span 0
+        else 
+          span #{disc.flightNumbers.fade}
+      input#fade.custom-range(type='range' name='fade' min='0' max='6' step='0.5' required value=(undefined===disc ? 0 : disc.flightNumbers.fade) oninput='this.previousElementSibling.value = this.value')
+
+    button.btn.btn-primary(type='submit') Submit
+  
+  if errors
+    for error in errors
+      small#nameHelp.form-text.text-danger #{error.msg}

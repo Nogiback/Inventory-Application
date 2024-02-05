@@ -1,0 +1,22 @@
+extends layout
+
+block content
+
+  h1 #{title}
+
+  form(method='POST')
+    .form-group
+      label(for='type') Disc Type:
+      input#type.form-control(type='text' name='type' required value=(undefined===discType ? '' : discType.type))
+      if errors
+          for error in errors
+            if error.path === "type"
+              small#nameHelp.form-text.text-danger #{error.msg}
+    .form-group
+      label(for='description') Description: 
+      textarea#description.form-control(type='text' name='description' value=(undefined===discType ? '' : discType.description))
+      if errors
+        for error in errors
+          if error.path == "description"
+            small#nameHelp.form-text.text-danger #{error.msg}
+    button.btn.btn-primary(type='submit') Submit

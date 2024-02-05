@@ -1,0 +1,14 @@
+extends layout
+
+block content
+
+  h1 #{title}
+
+  form(method='POST')
+    div.form-group
+      label(for='name') Manufacturer:
+      input#name.form-control(type='text' name='name' required value=(undefined===manufacturer ? '' : manufacturer.name))
+      if errors
+          for error in errors
+              small#nameHelp.form-text.text-danger #{error.msg}
+    button.btn.btn-primary(type='submit') Submit

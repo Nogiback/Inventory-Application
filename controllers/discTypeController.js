@@ -1,6 +1,7 @@
 const DiscType = require("../models/discType");
 const Disc = require("../models/disc");
 const asyncHandler = require("express-async-handler");
+const { body, validationResult } = require("express-validator");
 
 exports.discType_list = asyncHandler(async (req, res, next) => {
   const discTypes = await DiscType.find().sort({ type: 1 }).exec();
@@ -29,13 +30,43 @@ exports.discType_details = asyncHandler(async (req, res, next) => {
   });
 });
 
-exports.discType_create_get = asyncHandler(async (req, res, next) => {
-  res.send("NOT YET IMPLEMENTED: DiscType Create GET");
-});
+exports.discType_create_get = (req, res, next) => {
+  res.render("discType_form", { title: "Add Disc Type" });
+};
 
-exports.discType_create_post = asyncHandler(async (req, res, next) => {
-  res.send("NOT YET IMPLEMENTED: DiscType Create POST");
-});
+exports.discType_create_post = [
+  body("type")
+    .trim()
+    .isLength({ min: 1 })
+    .escape()
+    .withMessage("Disc type required."),
+  body("description")
+    .trim()
+    .isLength({ max: 500 })
+    .escape()
+    .withMessage("Max 500 characters."),
+
+  asyncHandler(async (req, res, next) => {
+    const errors = validationResult(req);
+
+    const discType = new DiscType({
+      type: req.body.type,
+      description: req.body.description,
+    });
+
+    if (!errors.isEmpty()) {
+      res.render("discType_form", {
+        title: "Add Disc Type",
+        discType: discType,
+        errors: errors.array(),
+      });
+      return;
+    } else {
+      await discType.save();
+      res.redirect(discType.url);
+    }
+  }),
+];
 
 exports.discType_delete_get = asyncHandler(async (req, res, next) => {
   res.send("NOT YET IMPLEMENTED: DiscType Delete GET");

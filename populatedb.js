@@ -82,40 +82,9 @@ async function discCreate(
 async function createManufacturers() {
   console.log("Adding manufacturers");
   await Promise.all([
-    manufacturerCreate(0, "MVP/Axiom/Streamline", [
-      "Electron",
-      "Neutron",
-      "Proton",
-      "Fission",
-      "Eclipse",
-      "Plasma",
-      "Cosmic Neutron",
-      "Cosmic Electron",
-      "Prism Proton",
-      "R2 Neutron",
-    ]),
-    manufacturerCreate(1, "Innova", [
-      "Star",
-      "Champion",
-      "DX",
-      "Halo Star",
-      "GStar",
-      "Blizzard",
-      "Metal Flake",
-      "Nexus",
-      "XT",
-      "Pro",
-      "R-Pro",
-      "KC Pro",
-      "JK Pro",
-    ]),
-    manufacturerCreate(2, "Kastaplast", [
-      "K1",
-      "K1 Soft",
-      "K3",
-      "K3 Hard",
-      "K1 Glow",
-    ]),
+    manufacturerCreate(0, "MVP/Axiom/Streamline"),
+    manufacturerCreate(1, "Innova"),
+    manufacturerCreate(2, "Kastaplast"),
   ]);
 }
 

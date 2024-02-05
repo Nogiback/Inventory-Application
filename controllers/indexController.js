@@ -2,6 +2,7 @@ const Disc = require("../models/disc");
 const DiscType = require("../models/discType");
 const Manufacturer = require("../models/manufacturer");
 const asyncHandler = require("express-async-handler");
+const { body, validationResult } = require("express-validator");
 
 exports.store = asyncHandler(async (req, res, next) => {
   // Get counts

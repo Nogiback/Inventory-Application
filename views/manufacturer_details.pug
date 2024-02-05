@@ -5,10 +5,6 @@ block content
   .card.bg-dark.text-white
     h5.card-header #{manufacturer.name}
     .card-body
-      p.card-text Plastics:
-      ul 
-        each plastic in manufacturer.plastics
-          li.card-text #{plastic}
       p.card-text Discs In Stock: 
       ul 
         each disc in allDiscsByManufacturer
