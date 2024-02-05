@@ -5,10 +5,12 @@ block content
   .card.bg-dark.text-white
     h5.card-header Mold: #{disc.name}
     .card-body
-      p.card-text Manufacturer: #{disc.manufacturer.name}
+      p.card-text Manufacturer: 
+        a(href=disc.manufacturer.url) #{disc.manufacturer.name}
       p.card-text Plastic: #{disc.plastic}
       p.card-text Flight Numbers: #{disc.flightNumbers.speed}, #{disc.flightNumbers.glide}, #{disc.flightNumbers.turn}, #{disc.flightNumbers.fade}
-      p.card-text Disc Type: #{disc.discType.type}
+      p.card-text Disc Type: 
+        a(href=disc.discType.url) #{disc.discType.type}
       p.card-text Price: $#{disc.price}
       p.card-text In Stock: #{disc.stock}
       a.btn.btn-primary.mr-2(href=disc.url+'/update') Update Disc

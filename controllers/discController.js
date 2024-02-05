@@ -84,8 +84,6 @@ exports.disc_create_post = [
       stock: req.body.stock,
     });
 
-    console.log(disc);
-
     if (!errors.isEmpty()) {
       const [allManufacturers, allDiscTypes] = await Promise.all([
         Manufacturer.find().sort({ name: 1 }).exec(),
