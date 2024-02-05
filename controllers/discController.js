@@ -106,11 +106,24 @@ exports.disc_create_post = [
 ];
 
 exports.disc_delete_get = asyncHandler(async (req, res, next) => {
-  res.send("NOT YET IMPLEMENTED: Disc Delete GET");
+  const disc = await Disc.findById(req.params.id)
+    .populate("manufacturer")
+    .populate("discType")
+    .exec();
+
+  if (disc === null) {
+    res.redirect("/store/discs");
+  }
+
+  res.render("disc_delete", {
+    title: "Delete Disc",
+    disc: disc,
+  });
 });
 
 exports.disc_delete_post = asyncHandler(async (req, res, next) => {
-  res.send("NOT YET IMPLEMENTED: Disc Delete POST");
+  await Disc.findByIdAndDelete(req.body.discId);
+  res.redirect("/store/discs");
 });
 
 exports.disc_update_get = asyncHandler(async (req, res, next) => {

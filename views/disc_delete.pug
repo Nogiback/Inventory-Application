@@ -13,5 +13,11 @@ block content
         a(href=disc.discType.url) #{disc.discType.type}
       p.card-text Price: $#{disc.price}
       p.card-text In Stock: #{disc.stock}
-      a.btn.btn-primary.mr-2(href=disc.url+'/update') Update Disc
-      a.btn.btn-primary(href=disc.url+'/delete') Delete Disc
+      hr
+      h5 Are you sure?
+      small This will remove the disc mold and all stock from the inventory.
+      form(method='POST')
+        div.form-group
+          input#discId.form-control(type='hidden', name='discId', value=disc._id )
+        button.btn.btn-danger.mr-2(type='submit') Delete
+        a.btn.btn-primary(href=disc.url) Cancel
