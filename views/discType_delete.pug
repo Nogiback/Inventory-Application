@@ -1,0 +1,24 @@
+extends layout
+
+block content
+  h1= title
+  .card.bg-dark.text-white
+    h4.card-header #{discType.type}
+    .card-body
+      p.card-text #{discType.description}
+      if allDiscsByType.length
+        hr
+        p.card-text #[strong The following discs must be deleted before attempting to delete this disc type:]
+          ul 
+            each disc in allDiscsByType
+              li.card-text
+                a(href=disc.url) #{disc.plastic} #{disc.name}
+      else          
+        hr
+        h5 Are you sure?
+        small This will remove the disc type from the inventory.
+        form(method='POST')
+          div.form-group
+            input#discTypeId.form-control(type='hidden', name='discTypeId', value=discType._id )
+          button.btn.btn-danger.mr-2(type='submit') Delete
+          a.btn.btn-primary(href=discType.url) Cancel

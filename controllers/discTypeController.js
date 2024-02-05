@@ -69,11 +69,39 @@ exports.discType_create_post = [
 ];
 
 exports.discType_delete_get = asyncHandler(async (req, res, next) => {
-  res.send("NOT YET IMPLEMENTED: DiscType Delete GET");
+  const [discType, allDiscsByType] = await Promise.all([
+    DiscType.findById(req.params.id).exec(),
+    Disc.find({ discType: req.params.id }, "name plastic").exec(),
+  ]);
+
+  if (discType === null) {
+    res.redirect("/store/discTypes");
+  }
+
+  res.render("discType_delete", {
+    title: "Delete Disc Type",
+    discType: discType,
+    allDiscsByType: allDiscsByType,
+  });
 });
 
 exports.discType_delete_post = asyncHandler(async (req, res, next) => {
-  res.send("NOT YET IMPLEMENTED: DiscType Delete POST");
+  const [discType, allDiscsByType] = await Promise.all([
+    DiscType.findById(req.params.id).exec(),
+    Disc.find({ discType: req.params.id }, "name plastic").exec(),
+  ]);
+
+  if (allDiscsByType.length > 0) {
+    res.render("discType_delete", {
+      title: "Delete Disc Type",
+      discType: discType,
+      allDiscsByType: allDiscsByType,
+    });
+    return;
+  } else {
+    await DiscType.findByIdAndDelete(req.body.discTypeId);
+    res.redirect("/store/discTypes");
+  }
 });
 
 exports.discType_update_get = asyncHandler(async (req, res, next) => {

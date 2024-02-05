@@ -1,0 +1,29 @@
+extends layout
+
+block content
+  h1= title
+  .card.bg-dark.text-white
+    h4.card-header #{manufacturer.name}
+    .card-body
+      if allDiscsByManufacturer.length
+        p.card-text #[strong The following discs will also be deleted from the inventory:]
+          ul 
+            each disc in allDiscsByManufacturer
+              li.card-text
+                a(href=disc.url) #{disc.plastic} #{disc.name}
+        hr
+        h5 Are you sure?
+        small This will remove the manufacturer and discs from the inventory.
+        form(method='POST')
+          div.form-group
+            input#manufacturerId.form-control(type='hidden', name='manufacturerId', value=manufacturer._id )
+          button.btn.btn-danger.mr-2(type='submit') Delete
+          a.btn.btn-primary(href=manufacturer.url) Cancel
+      else          
+        h5 Are you sure?
+        small This will remove the manufacturer from the inventory.
+        form(method='POST')
+          div.form-group
+            input#manufacturerId.form-control(type='hidden', name='manufacturerId', value=manufacturer._id )
+          button.btn.btn-danger.mr-2(type='submit') Delete
+          a.btn.btn-primary(href=manufacturer.url) Cancel

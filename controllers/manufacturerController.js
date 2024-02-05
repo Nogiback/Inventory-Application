@@ -70,11 +70,36 @@ exports.manufacturer_create_post = [
 ];
 
 exports.manufacturer_delete_get = asyncHandler(async (req, res, next) => {
-  res.send("NOT YET IMPLEMENTED: Manufacturer Delete GET");
+  const [manufacturer, allDiscsByManufacturer] = await Promise.all([
+    Manufacturer.findById(req.params.id).exec(),
+    Disc.find({ manufacturer: req.params.id }, "name plastic").exec(),
+  ]);
+
+  if (manufacturer === null) {
+    res.redirect("/store/manufacturers");
+  }
+
+  res.render("manufacturer_delete", {
+    title: "Delete Manufacturer",
+    manufacturer: manufacturer,
+    allDiscsByManufacturer: allDiscsByManufacturer,
+  });
 });
 
 exports.manufacturer_delete_post = asyncHandler(async (req, res, next) => {
-  res.send("NOT YET IMPLEMENTED: Manufacturer Delete POST");
+  const [manufacturer, allDiscsByManufacturer] = await Promise.all([
+    Manufacturer.findById(req.params.id).exec(),
+    Disc.find({ manufacturer: req.params.id }, "name plastic").exec(),
+  ]);
+
+  if (allDiscsByManufacturer.length > 0) {
+    allDiscsByManufacturer.forEach(async (disc) => {
+      await Disc.findByIdAndDelete(disc._id);
+    });
+  }
+
+  await Manufacturer.findByIdAndDelete(req.body.manufacturerId);
+  res.redirect("/store/manufacturers");
 });
 
 exports.manufacturer_update_get = asyncHandler(async (req, res, next) => {
