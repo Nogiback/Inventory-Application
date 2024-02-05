@@ -127,7 +127,24 @@ exports.disc_delete_post = asyncHandler(async (req, res, next) => {
 });
 
 exports.disc_update_get = asyncHandler(async (req, res, next) => {
-  res.send("NOT YET IMPLEMENTED: Disc Update GET");
+  const [disc, allManufacturers, allDiscTypes] = await Promise.all([
+    Disc.findById(req.params.id).exec(),
+    Manufacturer.find().sort({ name: 1 }).exec(),
+    DiscType.find().sort({ type: 1 }).exec(),
+  ]);
+
+  if (disc === null) {
+    const err = new Error("Disc not found");
+    err.status = 404;
+    return next(err);
+  }
+
+  res.render("disc_form", {
+    title: "Update Disc Details",
+    manufacturers: allManufacturers,
+    discTypes: allDiscTypes,
+    disc: disc,
+  });
 });
 
 exports.disc_update_post = asyncHandler(async (req, res, next) => {
