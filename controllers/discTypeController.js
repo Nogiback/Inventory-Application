@@ -105,9 +105,55 @@ exports.discType_delete_post = asyncHandler(async (req, res, next) => {
 });
 
 exports.discType_update_get = asyncHandler(async (req, res, next) => {
-  res.send("NOT YET IMPLEMENTED: DiscType Update GET");
+  const discType = await DiscType.findById(req.params.id).exec();
+
+  if (discType === null) {
+    const err = new Error("Disc type not found");
+    err.status = 404;
+    return next(err);
+  }
+
+  res.render("discType_form", {
+    title: "Update Disc Type",
+    discType: discType,
+  });
 });
 
-exports.discType_update_post = asyncHandler(async (req, res, next) => {
-  res.send("NOT YET IMPLEMENTED: DiscType Update POST");
-});
+exports.discType_update_post = [
+  body("type")
+    .trim()
+    .isLength({ min: 1 })
+    .escape()
+    .withMessage("Disc type required."),
+  body("description")
+    .trim()
+    .isLength({ max: 500 })
+    .escape()
+    .withMessage("Max 500 characters."),
+
+  asyncHandler(async (req, res, next) => {
+    const errors = validationResult(req);
+
+    const discType = new DiscType({
+      type: req.body.type,
+      description: req.body.description,
+      _id: req.params.id,
+    });
+
+    if (!errors.isEmpty()) {
+      res.render("discType_form", {
+        title: "Update Disc Type",
+        discType: discType,
+        errors: errors.array(),
+      });
+      return;
+    } else {
+      const updatedDiscType = await DiscType.findByIdAndUpdate(
+        req.params.id,
+        discType,
+        {}
+      );
+      res.redirect(updatedDiscType.url);
+    }
+  }),
+];

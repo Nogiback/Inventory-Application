@@ -13,8 +13,11 @@ block content
             if error.path === "type"
               small#nameHelp.form-text.text-danger #{error.msg}
     .form-group
-      label(for='description') Description: 
-      textarea#description.form-control(type='text' name='description' value=(undefined===discType ? '' : discType.description))
+      label(for='description') Description:
+      if (undefined === discType)
+        textarea#description.form-control(type='text' name='description' rows='4') 
+      else
+        textarea#description.form-control(type='text' name='description' rows='5') #{discType.description}
       if errors
         for error in errors
           if error.path == "description"

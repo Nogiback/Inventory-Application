@@ -44,7 +44,6 @@ exports.manufacturer_create_post = [
   asyncHandler(async (req, res, next) => {
     const errors = validationResult(req);
 
-    // Create a genre object with escaped and trimmed data.
     const manufacturer = new Manufacturer({ name: req.body.name });
 
     if (!errors.isEmpty()) {
@@ -62,7 +61,6 @@ exports.manufacturer_create_post = [
         res.redirect(manufacturerExists.url);
       } else {
         await manufacturer.save();
-        // New genre saved. Redirect to genre detail page.
         res.redirect(manufacturer.url);
       }
     }
@@ -103,9 +101,55 @@ exports.manufacturer_delete_post = asyncHandler(async (req, res, next) => {
 });
 
 exports.manufacturer_update_get = asyncHandler(async (req, res, next) => {
-  res.send("NOT YET IMPLEMENTED: Manufacturer Update GET");
+  const manufacturer = await Manufacturer.findById(req.params.id).exec();
+
+  if (manufacturer === null) {
+    const err = new Error("Manufacturer not found");
+    err.status = 404;
+    return next(err);
+  }
+
+  res.render("manufacturer_form", {
+    title: "Update Manufacturer",
+    manufacturer: manufacturer,
+  });
 });
 
-exports.manufacturer_update_post = asyncHandler(async (req, res, next) => {
-  res.send("NOT YET IMPLEMENTED: Manufacturer Update POST");
-});
+exports.manufacturer_update_post = [
+  body("name", "Manufacturer name must contain at least 3 characters.")
+    .trim()
+    .isLength({ min: 3 })
+    .escape(),
+
+  asyncHandler(async (req, res, next) => {
+    const errors = validationResult(req);
+
+    const manufacturer = new Manufacturer({
+      name: req.body.name,
+      _id: req.params.id,
+    });
+
+    if (!errors.isEmpty()) {
+      res.render("manufacturer_form", {
+        title: "Update Manufacturer",
+        manufacturer: manufacturer,
+        errors: errors.array(),
+      });
+      return;
+    } else {
+      const manufacturerExists = await Manufacturer.findOne({
+        name: req.body.name,
+      }).exec();
+      if (manufacturerExists) {
+        res.redirect(manufacturerExists.url);
+      } else {
+        const updatedManufacturer = await Manufacturer.findByIdAndUpdate(
+          req.params.id,
+          manufacturer,
+          {}
+        );
+        res.redirect(updatedManufacturer.url);
+      }
+    }
+  }),
+];
