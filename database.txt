@@ -1,1 +1,0 @@
-mongodb+srv://nogiback:nogiback@cluster0.iegwrmv.mongodb.net/inventory_app?retryWrites=true&w=majority
