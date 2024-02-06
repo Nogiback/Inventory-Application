@@ -1,11 +1,12 @@
 extends layout
 
 block content
-  h1= title
-  p Welcome to #{title}
-  hr
-  h4 Inventory Count
-  p Disc Molds: #{numDiscs}
-  p Disc Types: #{numDiscTypes}
-  p Manufacturers: #{numManufacturers}
-  p Total Discs In Stock: #{inventory}
+  .container-fluid.d-flex.flex-column.align-items-center
+    h1= title
+    p Welcome to #{title}
+    hr
+    h4 Inventory Count
+    p Disc Molds: #{numDiscs}
+    p Disc Types: #{numDiscTypes}
+    p Manufacturers: #{numManufacturers}
+    p Total Discs In Stock: #{inventory}
